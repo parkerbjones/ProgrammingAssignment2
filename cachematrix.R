@@ -1,18 +1,20 @@
-## Creates an object storing our original matrix
+## Creates an object for storing the raw data matrix and defines object properties for
+## storing the matrix's inverse
+
 ## Used example matrix from ?solve
 ## hilbert <- function(n) { i <- 1:n; 1 / outer(i-1,i,"+")}
 ## h8 <- hilbert(8)
 ## a <- makeCacheMatrix(h8)
 ## cacheSolve(a)
 
-makeCacheMatrix <- function(x = numeric()) {
+makeCacheMatrix <- function(x = matrix()) {
         m <- NULL
         set <- function(y) {
                 x <<- y
                 m <<- NULL
         }
         get <- function() x
-        setmat <- function(matrix) m <<- matrix
+        setmat <- function(solve) m <<- solve
         getmat <- function() m
         list(set = set, get = get,
              setmat = setmat,
@@ -20,13 +22,14 @@ makeCacheMatrix <- function(x = numeric()) {
 }
 
 
-## If m is null, then we will calculate the inverse of our matrix
-## If m is not null, then we will return the previously calculated inverse of our matrix
+## If we have not calculated the matrix's inverse before, cacheSolve retrieves the raw data
+## and uses Solve(). The matrix's inverse is then stored for retrieval later if cacheSolve()
+## is used again.
 
 cacheSolve <- function(x, ...) {
         m <- x$getmat()
         if(!is.null(m)) {
-                message("getting cached data")
+                message("getting cached inverse matrix")
                 return(m)
         }
         data <- x$get()
